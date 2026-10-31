@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Reservation Confirmed | {{ cafe_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="padding-top: 4.5rem; padding-bottom: 5rem;">
+    <div class="container" style="max-width: 680px; text-align: center;">
+        
+        <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(46, 204, 113, 0.15); border: 2px solid var(--veg-green); color: var(--veg-green); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1.5rem; animation: pulse 2s infinite;">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <span class="section-tag">Booking Confirmed</span>
+        <h1 class="section-title">We Can't Wait to Host You!</h1>
+        <p class="section-desc" style="margin-bottom: 2.5rem;">Your table has been reserved at D Cool Cafe, Burla. Present this confirmation upon arrival.</p>
+
+        <!-- Digital Ticket Card -->
+        <div style="background: var(--bg-card); border: 2px dashed var(--border-highlight); border-radius: var(--radius-lg); padding: 2.2rem; text-align: left; box-shadow: var(--shadow-soft); margin-bottom: 2rem; position: relative;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.2rem; margin-bottom: 1.2rem;">
+                <div>
+                    <h3 style="font-size: 1.3rem; color: var(--primary-amber);">D COOL CAFE</h3>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Burla, Sambalpur, Odisha</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Booking ID</span>
+                    <strong style="font-size: 1.2rem; color: var(--primary-gold);">#DCC-{{ "%04d"|format(booking['id']) }}</strong>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; font-size: 0.95rem;">
+                <div>
+                    <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Guest Name</span>
+                    <strong>{{ booking['guest_name'] }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Contact Phone</span>
+                    <strong>{{ booking['phone'] }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Date & Time</span>
+                    <strong>{{ booking['reservation_date'] }} at {{ booking['reservation_time'] }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Guests</span>
+                    <strong>{{ booking['guests_count'] }} Persons</strong>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Occasion</span>
+                    <strong>{{ booking['occasion'] }}</strong>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Status</span>
+                    <span class="status-pill open" style="padding: 0.15rem 0.6rem;">{{ booking['status'] }}</span>
+                </div>
+            </div>
+
+            {% if booking['special_requests'] %}
+            <div style="margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid rgba(229, 169, 80, 0.1);">
+                <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Special Notes:</span>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); font-style: italic;">"{{ booking['special_requests'] }}"</p>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Action CTAs -->
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="https://wa.me/{{ whatsapp_number }}?text=Hello%20D%20Cool%20Cafe%2C%20I%20have%20booking%20%23DCC-{{ '%04d'|format(booking['id']) }}%20for%20{{ booking['guest_name'] }}." 
+               target="_blank" 
+               class="btn btn-whatsapp">
+                <i class="fa-brands fa-whatsapp"></i> Confirm on WhatsApp
+            </a>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">
+                <i class="fa-solid fa-utensils"></i> Pre-select Food & Drinks
+            </a>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                <i class="fa-solid fa-house"></i> Return Home
+            </a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Book a Table | {{ cafe_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="padding-top: 3.5rem;">
+    <div class="container">
+        
+        <div class="section-head">
+            <span class="section-tag">Dine With Us</span>
+            <h1 class="section-title">Reserve Your Table</h1>
+            <p class="section-desc">Experience Burla's most cozy vintage adda. Whether it's an intimate date, a birthday bash, or catching up after classes, reserve your spot easily.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; align-items: start; max-width: 1100px; margin: 0 auto;">
+            
+            <!-- Reservation Form Card -->
+            <div class="reserve-wrapper" style="margin: 0; max-width: 100%;">
+                <form action="{{ url_for('reserve') }}" method="POST">
+                    <div class="form-grid">
+                        
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-user"></i> Full Name *</label>
+                            <input type="text" name="guest_name" class="form-input" placeholder="e.g. Rahul Sharma" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-phone"></i> WhatsApp Phone Number *</label>
+                            <input type="tel" name="phone" class="form-input" placeholder="e.g. 9876543210" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" name="email" class="form-input" placeholder="e.g. rahul@vssut.ac.in">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-users"></i> Number of Guests *</label>
+                            <select name="guests_count" class="form-select" required>
+                                <option value="1">1 Person (Quiet corner)</option>
+                                <option value="2" selected>2 Persons (Cozy Date / Meetup)</option>
+                                <option value="3">3 Persons</option>
+                                <option value="4">4 Persons (Squad Adda)</option>
+                                <option value="6">5 - 6 Persons (Group Seating)</option>
+                                <option value="8">7 - 9 Persons (Party Table)</option>
+                                <option value="12">10 - 15 Persons (Celebration / Birthday)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-calendar"></i> Date *</label>
+                            <input type="date" name="reservation_date" id="resPageDate" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-clock"></i> Preferred Time *</label>
+                            <select name="reservation_time" class="form-select" required>
+                                <option value="11:30 AM">11:30 AM (Opening Lunch)</option>
+                                <option value="01:00 PM">01:00 PM (Lunch)</option>
+                                <option value="02:30 PM">02:30 PM (Mid-day Coffee)</option>
+                                <option value="04:00 PM">04:00 PM (Tea & Snacks)</option>
+                                <option value="05:30 PM">05:30 PM (Evening Chill)</option>
+                                <option value="07:00 PM" selected>07:00 PM (Prime Evening)</option>
+                                <option value="08:30 PM">08:30 PM (Dinner & Vibe)</option>
+                                <option value="09:45 PM">09:45 PM (Late Dine-in)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label"><i class="fa-solid fa-champagne-glasses"></i> Occasion</label>
+                            <select name="occasion" class="form-select">
+                                <option value="Casual Hangout">Casual Hangout / Adda</option>
+                                <option value="Birthday Celebration">Birthday Celebration 🎂</option>
+                                <option value="Date Night">Romantic Date Night ✨</option>
+                                <option value="Anniversary">Anniversary Celebration 🥂</option>
+                                <option value="Exam / Farewell Party">Post-Exam / Farewell Party 🎉</option>
+                                <option value="Business / Study Discussion">Study / Project Discussion 📚</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label"><i class="fa-solid fa-note-sticky"></i> Special Requests or Notes</label>
+                            <textarea name="special_requests" class="form-textarea" placeholder="Let us know if you need balloon/fairy light setup, cake arrangement, special music track, or specific seating area..."></textarea>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fa-solid fa-circle-check"></i> Complete Table Reservation
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- Helpful Sidebar -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.8rem;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; color: var(--primary-amber);">
+                        <i class="fa-solid fa-star"></i> Why Book Ahead?
+                    </h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.9rem; font-size: 0.92rem; color: var(--text-secondary);">
+                        <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+                            <i class="fa-solid fa-check" style="color: var(--primary-amber); margin-top: 3px;"></i>
+                            <span><strong>Zero Wait Time:</strong> Walk straight into your reserved spot during rush student hours.</span>
+                        </li>
+                        <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+                            <i class="fa-solid fa-check" style="color: var(--primary-amber); margin-top: 3px;"></i>
+                            <span><strong>Birthday Specials:</strong> Free customized birthday background music upon request.</span>
+                        </li>
+                        <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+                            <i class="fa-solid fa-check" style="color: var(--primary-amber); margin-top: 3px;"></i>
+                            <span><strong>Instant WhatsApp Confirmation:</strong> Direct confirmation message sent to your phone.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(24, 18, 15, 0.8)); border: 1px solid rgba(37, 211, 102, 0.3); border-radius: var(--radius-md); padding: 1.8rem; text-align: center;">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 2.4rem; color: var(--whatsapp-green); margin-bottom: 0.8rem;"></i>
+                    <h4 style="font-size: 1.15rem; margin-bottom: 0.4rem;">Prefer Instant Chat?</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">Book directly or ask anything via WhatsApp with our team.</p>
+                    <a href="https://wa.me/{{ whatsapp_number }}?text=Hi%20D%20Cool%20Cafe!%20I%20would%20like%20to%20reserve%20a%20table%20for%20tonight." 
+                       target="_blank" 
+                       class="btn btn-whatsapp w-100">
+                        <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const resDate = document.getElementById('resPageDate');
+    if (resDate) {
+        const today = new Date().toISOString().split('T')[0];
+        resDate.min = today;
+        resDate.value = today;
+    }
+</script>
+{% endblock %}

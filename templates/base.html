@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ cafe_name }} | Vintage Cafe & Hangout Adda in Burla{% endblock %}</title>
+    <meta name="description" content="Welcome to D Cool Cafe in Burla, Odisha. A vintage vibe, delicious food, artisan coffee, sizzling burgers, stone-baked pizzas, and fun experiences. Follow @d_cool_cafe on Instagram!">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+</head>
+<body class="cafe-body">
+
+    <!-- Top Announcement Bar -->
+    <header class="top-announcement">
+        <div class="container top-bar-content">
+            <div class="top-bar-left">
+                <span class="status-pill {% if cafe_status.is_open %}open{% else %}closed{% endif %}">
+                    <span class="pulse-dot"></span>
+                    {{ cafe_status.status_text }} ({{ cafe_status.hours }})
+                </span>
+                <span class="location-badge"><i class="fa-solid fa-location-dot"></i> Near NAC Office, Daily Market, Burla</span>
+            </div>
+            <div class="top-bar-right">
+                <a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer" class="insta-link">
+                    <i class="fa-brands fa-instagram"></i> @{{ instagram_handle }}
+                </a>
+                <a href="https://wa.me/{{ whatsapp_number }}?text=Hello%20D%20Cool%20Cafe!%20I%20would%20like%20to%20inquire." target="_blank" class="quick-call">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp Us
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="{{ url_for('index') }}" class="brand-logo">
+                <div class="brand-symbol">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">D COOL CAFE</span>
+                    <span class="brand-tagline">VINTAGE ADDA • BURLA</span>
+                </div>
+            </a>
+
+            <div class="nav-links" id="navLinks">
+                <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">Home</a>
+                <a href="{{ url_for('menu') }}" class="nav-item {% if request.endpoint == 'menu' %}active{% endif %}">Menu & Bites</a>
+                <a href="{{ url_for('reserve') }}" class="nav-item {% if request.endpoint == 'reserve' %}active{% endif %}">Book Table</a>
+                <a href="{{ url_for('gallery') }}" class="nav-item {% if request.endpoint == 'gallery' %}active{% endif %}">Vintage Gallery</a>
+                <a href="{{ url_for('about') }}" class="nav-item {% if request.endpoint == 'about' %}active{% endif %}">Our Story</a>
+                <a href="{{ url_for('contact') }}" class="nav-item {% if request.endpoint == 'contact' %}active{% endif %}">Contact & Visit</a>
+            </div>
+
+            <div class="nav-actions">
+                <!-- Cart Trigger Button -->
+                <button class="cart-btn" id="openCartBtn" title="View Order">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                
+                <a href="{{ url_for('reserve') }}" class="btn btn-primary nav-reserve-btn">
+                    <i class="fa-solid fa-chair"></i> Reserve Table
+                </a>
+                
+                <!-- Mobile Hamburger Toggle -->
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="flash-container container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+                        <span>{{ message }}</span>
+                        <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Page Content Block -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Slide-in Order Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <div class="cart-title-wrap">
+                <i class="fa-solid fa-utensils"></i>
+                <h3>Your Table / Takeaway Order</h3>
+            </div>
+            <button class="cart-close" id="closeCartBtn">&times;</button>
+        </div>
+        
+        <div class="cart-body" id="cartItemsList">
+            <!-- Dynamic cart items rendered via JS -->
+            <div class="empty-cart-msg">
+                <i class="fa-solid fa-bowl-food empty-icon"></i>
+                <p>Your order is currently empty.</p>
+                <a href="{{ url_for('menu') }}" class="btn btn-secondary btn-sm" onclick="closeCart()">Explore Menu</a>
+            </div>
+        </div>
+        
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-totals">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">₹0</span>
+                </div>
+                <div class="total-row total-highlight">
+                    <span>Total Amount:</span>
+                    <span id="cartGrandTotal">₹0</span>
+                </div>
+            </div>
+
+            <!-- Customer Details for WhatsApp / Table Order -->
+            <div class="order-inputs">
+                <input type="text" id="orderCustName" placeholder="Your Name" class="cart-input">
+                <select id="orderType" class="cart-input">
+                    <option value="Dine-in (Table)">Dine-in (At D Cool Cafe)</option>
+                    <option value="Takeaway / Parcel">Takeaway / Parcel Pickup</option>
+                </select>
+                <input type="text" id="orderTableNum" placeholder="Table Number (if seated) or Notes" class="cart-input">
+            </div>
+
+            <button class="btn btn-whatsapp w-100" id="sendWhatsAppOrderBtn">
+                <i class="fa-brands fa-whatsapp"></i> Send Order on WhatsApp
+            </button>
+            <button class="btn btn-outline-danger btn-sm w-100 mt-2" onclick="clearCart()">
+                <i class="fa-solid fa-trash-can"></i> Clear Order
+            </button>
+        </div>
+    </aside>
+
+    <!-- Floating Quick WhatsApp Button -->
+    <a href="https://wa.me/{{ whatsapp_number }}?text=Hi%20D%20Cool%20Cafe%2C%20I%20have%20an%20inquiry%20regarding%20menu%20and%20table%20reservation!" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="floating-whatsapp" 
+       title="Chat with D Cool Cafe">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="floating-tooltip">Chat with us!</span>
+    </a>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="container footer-grid">
+                
+                <!-- Col 1: About & Instagram -->
+                <div class="footer-col brand-col">
+                    <div class="footer-logo">
+                        <i class="fa-solid fa-mug-hot"></i>
+                        <span>D COOL CAFE</span>
+                    </div>
+                    <p class="footer-quote">
+                        "{{ tagline }}"
+                    </p>
+                    <div class="footer-insta-badge">
+                        <a href="{{ instagram_url }}" target="_blank" class="insta-pill">
+                            <i class="fa-brands fa-instagram"></i> Follow @{{ instagram_handle }}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}"><i class="fa-solid fa-angle-right"></i> Home</a></li>
+                        <li><a href="{{ url_for('menu') }}"><i class="fa-solid fa-angle-right"></i> Explore Menu</a></li>
+                        <li><a href="{{ url_for('reserve') }}"><i class="fa-solid fa-angle-right"></i> Book a Table</a></li>
+                        <li><a href="{{ url_for('gallery') }}"><i class="fa-solid fa-angle-right"></i> Instagram Wall</a></li>
+                        <li><a href="{{ url_for('about') }}"><i class="fa-solid fa-angle-right"></i> About Our Cafe</a></li>
+                        <li><a href="{{ url_for('contact') }}"><i class="fa-solid fa-angle-right"></i> Contact & Map</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Popular Items -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Burla Favorites</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('menu', category='Coffee & Brews') }}"><i class="fa-solid fa-angle-right"></i> Signature Cold Coffee</a></li>
+                        <li><a href="{{ url_for('menu', category='Burgers & Sandwiches') }}"><i class="fa-solid fa-angle-right"></i> Peri-Peri Chicken Burger</a></li>
+                        <li><a href="{{ url_for('menu', category='Handcrafted Pizzas') }}"><i class="fa-solid fa-angle-right"></i> Tandoori Paneer Pizza</a></li>
+                        <li><a href="{{ url_for('menu', category='Quick Bites') }}"><i class="fa-solid fa-angle-right"></i> Loaded Cheesy Fries</a></li>
+                        <li><a href="{{ url_for('menu', category='Shakes & Desserts') }}"><i class="fa-solid fa-angle-right"></i> Oreo Overload Monster Shake</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Timings & Address -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Visit Us in Burla</h4>
+                    <div class="footer-info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>{{ address_line1 }}, {{ address_line2 }}, {{ pincode }}, {{ state }}</span>
+                    </div>
+                    <div class="footer-info-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Every Day: 11:30 AM – 10:30 PM</span>
+                    </div>
+                    <div class="footer-info-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>{{ phone_number }}</span>
+                    </div>
+                    <div class="footer-info-item">
+                        <i class="fa-brands fa-instagram"></i>
+                        <a href="{{ instagram_url }}" target="_blank">instagram.com/{{ instagram_handle }}</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container footer-bottom-content">
+                <p>&copy; {{ current_year }} {{ cafe_name }}. Crafted with love for foodies & student addas.</p>
+                <div class="footer-bottom-links">
+                    <a href="{{ url_for('admin_dashboard') }}" class="admin-link"><i class="fa-solid fa-lock"></i> Staff Login</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

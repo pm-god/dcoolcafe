@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Menu & Delights | {{ cafe_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="padding-top: 3.5rem;">
+    <div class="container">
+        
+        <!-- Header -->
+        <div class="section-head mb-4">
+            <span class="section-tag">Crafted With Passion</span>
+            <h1 class="section-title">Our Food & Beverage Menu</h1>
+            <p class="section-desc">From freshly brewed hot & cold coffees to oven-crisped stone pizzas and juicy burgers. Order directly for table dine-in or takeaway parcel!</p>
+        </div>
+
+        <!-- Controls: Category Pills & Live Search -->
+        <div class="menu-controls">
+            <div class="category-pills">
+                <a href="{{ url_for('menu', category='All') }}" class="cat-pill {% if active_category == 'All' %}active{% endif %}">
+                    All Delights
+                </a>
+                {% for cat in categories %}
+                <a href="{{ url_for('menu', category=cat) }}" class="cat-pill {% if active_category == cat %}active{% endif %}">
+                    {{ cat }}
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- Live Filter Search & Diet Toggles -->
+            <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                <div class="menu-search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="menuSearchInput" placeholder="Search dish, pizza, coffee..." value="{{ search_query }}">
+                </div>
+
+                <div style="display: flex; gap: 0.4rem;">
+                    <button class="cat-pill" id="filterVegBtn" onclick="toggleDietFilter('veg')">
+                        <span style="color: #2ecc71;">●</span> Veg Only
+                    </button>
+                    <button class="cat-pill" id="filterNonVegBtn" onclick="toggleDietFilter('nonveg')">
+                        <span style="color: #e74c3c;">▲</span> Non-Veg
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Item Cards Grid -->
+        <div class="menu-grid" id="menuItemsGrid">
+            {% for item in items %}
+            <div class="food-card menu-dish-card" 
+                 data-name="{{ item['name']|lower }}" 
+                 data-desc="{{ item['description']|lower }}" 
+                 data-diet="{% if item['is_veg'] %}veg{% else %}nonveg{% endif %}">
+                <div class="food-img-wrap">
+                    <img src="{{ item['image_url'] }}" alt="{{ item['name'] }}" loading="lazy">
+                    <div class="card-badges">
+                        {% if item['is_bestseller'] %}
+                        <span class="badge-tag badge-bestseller"><i class="fa-solid fa-fire"></i> Bestseller</span>
+                        {% endif %}
+                        {% if item['is_spicy'] %}
+                        <span class="badge-tag badge-spicy"><i class="fa-solid fa-pepper-hot"></i> Spicy</span>
+                        {% endif %}
+                    </div>
+                    <div class="diet-indicator {% if item['is_veg'] %}veg{% else %}nonveg{% endif %}" 
+                         title="{% if item['is_veg'] %}Pure Vegetarian{% else %}Non-Veg{% endif %}"></div>
+                </div>
+                <div class="food-info">
+                    <span class="food-category-label">{{ item['category'] }}</span>
+                    <h3 class="food-name">{{ item['name'] }}</h3>
+                    <p class="food-desc">{{ item['description'] }}</p>
+                    <div class="food-footer">
+                        <span class="food-price">₹{{ "%.0f"|format(item['price']) }}</span>
+                        <button class="add-cart-btn" onclick="addToCart({{ item['id'] }}, '{{ item['name']|replace("'", "\\'") }}', {{ item['price'] }}, {{ item['is_veg'] }})">
+                            <i class="fa-solid fa-plus"></i> Add to Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
+                <i class="fa-solid fa-cookie-bite" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-amber);"></i>
+                <h3>No dishes found matching your selection.</h3>
+                <p>Try resetting filters or checking another category.</p>
+                <a href="{{ url_for('menu') }}" class="btn btn-secondary mt-3">Reset Filters</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Helpful Ordering Note Banner -->
+        <div style="margin-top: 4rem; background: var(--bg-card); border: 1px dashed var(--primary-amber); border-radius: var(--radius-md); padding: 1.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <i class="fa-solid fa-lightbulb" style="font-size: 2rem; color: var(--primary-amber);"></i>
+                <div>
+                    <h4 style="font-size: 1.15rem; margin-bottom: 0.2rem;">Sitting at a table right now?</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Add items to your cart, enter your table number, and send your order directly to our kitchen via WhatsApp!</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openCart()">
+                <i class="fa-solid fa-bag-shopping"></i> Review My Order
+            </button>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let activeDiet = 'all';
+
+    function toggleDietFilter(type) {
+        const vegBtn = document.getElementById('filterVegBtn');
+        const nonVegBtn = document.getElementById('filterNonVegBtn');
+
+        if (activeDiet === type) {
+            activeDiet = 'all';
+            vegBtn.classList.remove('active');
+            nonVegBtn.classList.remove('active');
+        } else {
+            activeDiet = type;
+            if (type === 'veg') {
+                vegBtn.classList.add('active');
+                nonVegBtn.classList.remove('active');
+            } else {
+                nonVegBtn.classList.add('active');
+                vegBtn.classList.remove('active');
+            }
+        }
+        applyFilters();
+    }
+
+    const searchInput = document.getElementById('menuSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+
+    function applyFilters() {
+        const query = (document.getElementById('menuSearchInput')?.value || '').toLowerCase().trim();
+        const cards = document.querySelectorAll('.menu-dish-card');
+
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            const desc = card.getAttribute('data-desc');
+            const diet = card.getAttribute('data-diet');
+
+            const matchesSearch = !query || name.includes(query) || desc.includes(query);
+            const matchesDiet = (activeDiet === 'all') || (activeDiet === diet);
+
+            if (matchesSearch && matchesDiet) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

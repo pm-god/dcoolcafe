@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Contact & Visit Us | {{ cafe_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="padding-top: 3.5rem;">
+    <div class="container">
+        
+        <div class="section-head">
+            <span class="section-tag">Get in Touch</span>
+            <h1 class="section-title">Visit & Connect With Us</h1>
+            <p class="section-desc">Have a question about our menu, interested in booking the cafe for a private celebration, or need directions? We're here for you!</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 3rem; align-items: start; max-width: 1100px; margin: 0 auto;">
+            
+            <!-- Info Cards Column -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Live Status Card -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.8rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <span class="status-pill {% if cafe_status.is_open %}open{% else %}closed{% endif %}">
+                            <span class="pulse-dot"></span>
+                            {{ cafe_status.status_text }}
+                        </span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> Burla Time: {{ cafe_status.current_time }}</span>
+                    </div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Opening Hours</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>Monday to Sunday:</strong> 11:30 AM – 10:30 PM</p>
+                    <span style="font-size: 0.82rem; color: var(--primary-amber);">Dine-in, Takeaway & Table Reservations open daily</span>
+                </div>
+
+                <!-- Location Details -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.8rem;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1.2rem; color: var(--primary-amber); display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-map-location-dot"></i> Where to Find Us
+                    </h3>
+                    
+                    <div class="footer-info-item" style="margin-bottom: 1.2rem;">
+                        <i class="fa-solid fa-building" style="margin-top: 4px;"></i>
+                        <div>
+                            <strong>D Cool Cafe</strong>
+                            <p style="margin-top: 2px;">{{ address_line1 }}, {{ address_line2 }}, {{ pincode }}, {{ state }}</p>
+                        </div>
+                    </div>
+
+                    <div class="footer-info-item" style="margin-bottom: 1.2rem;">
+                        <i class="fa-solid fa-phone" style="margin-top: 4px;"></i>
+                        <div>
+                            <strong>Phone Number</strong>
+                            <p style="margin-top: 2px;">{{ phone_number }}</p>
+                        </div>
+                    </div>
+
+                    <div class="footer-info-item" style="margin-bottom: 1.4rem;">
+                        <i class="fa-brands fa-instagram" style="margin-top: 4px;"></i>
+                        <div>
+                            <strong>Instagram Handle</strong>
+                            <p style="margin-top: 2px;"><a href="{{ instagram_url }}" target="_blank">@{{ instagram_handle }}</a></p>
+                        </div>
+                    </div>
+
+                    <a href="https://www.google.com/maps/search/D+Cool+Cafe+Daily+Market+Burla+Odisha" target="_blank" rel="noopener noreferrer" class="btn btn-secondary w-100">
+                        <i class="fa-solid fa-diamond-turn-right"></i> Get Google Maps Directions
+                    </a>
+                </div>
+
+                <!-- WhatsApp Quick Chat -->
+                <div style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(24, 18, 15, 0.8)); border: 1px solid rgba(37, 211, 102, 0.3); border-radius: var(--radius-md); padding: 1.5rem; text-align: center;">
+                    <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Chat Directly on WhatsApp</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Have a quick question or want to order over chat?</p>
+                    <a href="https://wa.me/{{ whatsapp_number }}?text=Hello%20D%20Cool%20Cafe!%20I%20have%20an%20inquiry." target="_blank" class="btn btn-whatsapp w-100">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Us Now
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Contact Message Form -->
+            <div class="reserve-wrapper" style="margin: 0; max-width: 100%;">
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--text-primary);">Send Us a Message</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.8rem;">We read every note and will get back to you as soon as possible.</p>
+
+                <form action="{{ url_for('contact') }}" method="POST">
+                    <div class="form-grid">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Your Name *</label>
+                            <input type="text" name="name" class="form-input" placeholder="e.g. Priyadarshini Sahoo" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" name="phone" class="form-input" placeholder="e.g. 9876543210" required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-input" placeholder="e.g. priya@example.com">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label">Subject</label>
+                            <select name="subject" class="form-select">
+                                <option value="General Inquiry">General Inquiry</option>
+                                <option value="Private Event / Birthday Booking">Private Event / Birthday Booking 🎂</option>
+                                <option value="Feedback / Compliment">Feedback or Suggestion 💬</option>
+                                <option value="Catering / Bulk Order">Bulk Order or Catering 🍕</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label">Message *</label>
+                            <textarea name="message" class="form-textarea" placeholder="How can we help make your cafe experience special?" required></textarea>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fa-solid fa-paper-plane"></i> Send Message
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}

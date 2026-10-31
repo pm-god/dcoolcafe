@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-content">
+        <div class="hero-pill">
+            <i class="fa-solid fa-sparkles"></i> Burla's Favorite Student Adda & Hangout
+        </div>
+        <h1 class="hero-title">
+            Where Vintage Warmth Meets <span class="gold-accent">Delicious Flavors</span>
+        </h1>
+        <p class="hero-subtitle">
+            "{{ tagline }}"
+        </p>
+        <div class="hero-cta-group">
+            <a href="{{ url_for('menu') }}" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-book-open"></i> Explore Menu
+            </a>
+            <a href="{{ url_for('reserve') }}" class="btn btn-secondary btn-lg">
+                <i class="fa-solid fa-chair"></i> Reserve a Table
+            </a>
+            <a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-lg">
+                <i class="fa-brands fa-instagram"></i> @{{ instagram_handle }}
+            </a>
+        </div>
+
+        <div class="hero-metrics">
+            <div class="metric-item">
+                <span class="metric-number">50+</span>
+                <span class="metric-label">Handcrafted Dishes</span>
+            </div>
+            <div class="metric-item">
+                <span class="metric-number">4.9 ★</span>
+                <span class="metric-label">Google & Student Love</span>
+            </div>
+            <div class="metric-item">
+                <span class="metric-number">10k+</span>
+                <span class="metric-label">Memories Brewed</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- The Vintage Experience Highlights -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-head">
+            <span class="section-tag">Why You'll Love It</span>
+            <h2 class="section-title">The D Cool Vibe</h2>
+            <p class="section-desc">More than just a cafe—we are Burla's cozy haven for post-exam hangouts, deep talks, birthday surprises, and food crafted with passion.</p>
+        </div>
+
+        <div class="vibe-grid">
+            <div class="vibe-card">
+                <div class="vibe-icon">
+                    <i class="fa-solid fa-mug-saucer"></i>
+                </div>
+                <h3>Artisanal Coffee & Frappes</h3>
+                <p>From our thick, creamy signature Cold Coffee to roasted espresso, hazelnut brews, and rich mochas, every cup is freshly crafted.</p>
+            </div>
+
+            <div class="vibe-card">
+                <div class="vibe-icon">
+                    <i class="fa-solid fa-pizza-slice"></i>
+                </div>
+                <h3>Gourmet Pizzas & Burgers</h3>
+                <p>Crispy hand-tossed 10-inch stone-baked pizzas, loaded cheese burst crusts, and juicy gourmet burgers with house secret sauces.</p>
+            </div>
+
+            <div class="vibe-card">
+                <div class="vibe-icon">
+                    <i class="fa-solid fa-guitar"></i>
+                </div>
+                <h3>Vintage Cozy Ambiance</h3>
+                <p>Warm ambient lighting, vintage posters, comfy seating, chill acoustic playlists, and an intimate aesthetic made for unforgettable memories.</p>
+            </div>
+
+            <div class="vibe-card">
+                <div class="vibe-icon">
+                    <i class="fa-solid fa-cake-candles"></i>
+                </div>
+                <h3>Celebrations & Gatherings</h3>
+                <p>Host your birthdays, farewells, date nights, and group celebrations. Pre-book your table and let us set up the festive mood!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bestsellers Menu Section -->
+<section class="section-padding" style="background: #140f0c; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="container">
+        <div class="section-head">
+            <span class="section-tag">Popular Delights</span>
+            <h2 class="section-title">Crowd Favorites</h2>
+            <p class="section-desc">The items Burla locals and students order again and again.</p>
+        </div>
+
+        <div class="menu-grid">
+            {% for item in bestsellers %}
+            <div class="food-card">
+                <div class="food-img-wrap">
+                    <img src="{{ item['image_url'] }}" alt="{{ item['name'] }}" loading="lazy">
+                    <div class="card-badges">
+                        <span class="badge-tag badge-bestseller"><i class="fa-solid fa-fire"></i> Bestseller</span>
+                        {% if item['is_spicy'] %}
+                        <span class="badge-tag badge-spicy"><i class="fa-solid fa-pepper-hot"></i> Spicy</span>
+                        {% endif %}
+                    </div>
+                    <div class="diet-indicator {% if item['is_veg'] %}veg{% else %}nonveg{% endif %}" title="{% if item['is_veg'] %}Pure Vegetarian{% else %}Non-Veg{% endif %}"></div>
+                </div>
+                <div class="food-info">
+                    <span class="food-category-label">{{ item['category'] }}</span>
+                    <h3 class="food-name">{{ item['name'] }}</h3>
+                    <p class="food-desc">{{ item['description'] }}</p>
+                    <div class="food-footer">
+                        <span class="food-price">₹{{ "%.0f"|format(item['price']) }}</span>
+                        <button class="add-cart-btn" onclick="addToCart({{ item['id'] }}, '{{ item['name'] }}', {{ item['price'] }}, {{ item['is_veg'] }})">
+                            <i class="fa-solid fa-plus"></i> Add to Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4" style="text-align: center;">
+            <a href="{{ url_for('menu') }}" class="btn btn-secondary btn-lg">
+                View All Categories & Full Menu <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Instagram Showcase Section -->
+<section class="section-padding insta-section">
+    <div class="container">
+        <!-- Instagram Bio Card -->
+        <div class="insta-badge-banner">
+            <div class="insta-bio-block">
+                <div class="insta-avatar">
+                    <div class="insta-avatar-inner">
+                        <i class="fa-brands fa-instagram"></i>
+                    </div>
+                </div>
+                <div class="insta-meta">
+                    <h3>@{{ instagram_handle }}</h3>
+                    <p>"{{ tagline }}"</p>
+                </div>
+            </div>
+            <a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                <i class="fa-brands fa-instagram"></i> Follow on Instagram
+            </a>
+        </div>
+
+        <div class="section-head">
+            <span class="section-tag">Social Vibes</span>
+            <h2 class="section-title">Caught on Instagram</h2>
+            <p class="section-desc">Tag <strong style="color: var(--primary-amber);">@{{ instagram_handle }}</strong> or check in at D Cool Cafe to get featured on our cafe wall!</p>
+        </div>
+
+        <div class="insta-grid">
+            <div class="insta-card">
+                <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80" alt="D Cool Cafe Cold Coffee">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Cold coffee sips & late afternoon chill ☕ #dcoolcafe #burla</span>
+                </div>
+            </div>
+            <div class="insta-card">
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80" alt="Stone Baked Pizza">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Hot stone-baked pizza pull with friends 🍕 #burlafoodies</span>
+                </div>
+            </div>
+            <div class="insta-card">
+                <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80" alt="Cozy Cafe Corner">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Vintage vibes, warm lights & good talks ✨ @d_cool_cafe</span>
+                </div>
+            </div>
+            <div class="insta-card">
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80" alt="Juicy Burger">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Crunchy gourmet burgers made with love 🍔 #burlacafe</span>
+                </div>
+            </div>
+            <div class="insta-card">
+                <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80" alt="Blue Lagoon Mocktail">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Cool off with an Electric Blue Lagoon 🍹 #refreshing</span>
+                </div>
+            </div>
+            <div class="insta-card">
+                <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80" alt="Sizzling Brownie">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Hot sizzling brownie with cold vanilla scoop 🍫 #sweetdelight</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fast Table Booking Section -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-head">
+            <span class="section-tag">Join Us Tonight</span>
+            <h2 class="section-title">Reserve Your Cozy Corner</h2>
+            <p class="section-desc">Planning a birthday celebration, date evening, or an exam celebration with your gang? Reserve your spot in advance.</p>
+        </div>
+
+        <div class="reserve-wrapper">
+            <form action="{{ url_for('reserve') }}" method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" name="guest_name" class="form-input" placeholder="e.g. Ananya Das" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number (WhatsApp) *</label>
+                        <input type="tel" name="phone" class="form-input" placeholder="e.g. 9876543210" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-input" placeholder="e.g. ananya@gmail.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Number of Guests *</label>
+                        <select name="guests_count" class="form-select" required>
+                            <option value="1">1 Person (Quiet corner)</option>
+                            <option value="2" selected>2 Persons (Cozy Date Table)</option>
+                            <option value="4">3 - 4 Persons (Squad Adda)</option>
+                            <option value="6">5 - 6 Persons (Group Seating)</option>
+                            <option value="8">7 - 10 Persons (Party Long Table)</option>
+                            <option value="12">10+ Persons (Celebration / Birthday)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Reservation Date *</label>
+                        <input type="date" name="reservation_date" id="resDateInput" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Preferred Time Slot *</label>
+                        <select name="reservation_time" class="form-select" required>
+                            <option value="12:00 PM">12:00 PM (Lunch)</option>
+                            <option value="01:30 PM">01:30 PM (Lunch)</option>
+                            <option value="03:30 PM">03:30 PM (Afternoon Coffee)</option>
+                            <option value="05:00 PM">05:00 PM (Evening Bites)</option>
+                            <option value="06:30 PM">06:30 PM (Prime Evening)</option>
+                            <option value="08:00 PM" selected>08:00 PM (Dinner & Vibe)</option>
+                            <option value="09:15 PM">09:15 PM (Late Chill)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Occasion / Special Request</label>
+                        <textarea name="special_requests" class="form-textarea" placeholder="Birthday celebration (want cake arrangement / music), quiet study corner, or any dietary preferences..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width text-center">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fa-solid fa-calendar-check"></i> Confirm Table Reservation
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Customer Reviews Section -->
+<section class="section-padding" style="background: #140f0c; border-top: 1px solid var(--border-color);">
+    <div class="container">
+        <div class="section-head">
+            <span class="section-tag">Community Love</span>
+            <h2 class="section-title">What Our Guests Say</h2>
+            <p class="section-desc">Real stories and love from our regulars in Burla and Sambalpur.</p>
+        </div>
+
+        <div class="reviews-grid">
+            {% for rev in reviews %}
+            <div class="review-card">
+                <div>
+                    <div class="review-stars">
+                        {% for i in range(rev['rating']) %}
+                        <i class="fa-solid fa-star"></i>
+                        {% endfor %}
+                    </div>
+                    <p class="review-text">"{{ rev['comment'] }}"</p>
+                </div>
+                <div class="review-author">
+                    <div class="author-avatar">
+                        {{ rev['author_name'][0] }}
+                    </div>
+                    <div class="author-info">
+                        <h4>{{ rev['author_name'] }}</h4>
+                        <span class="author-tag">{{ rev['tag'] }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="review-submit-banner">
+            <button class="btn btn-secondary" onclick="openModal('reviewModal')">
+                <i class="fa-solid fa-pen-to-square"></i> Leave Your Review
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Review Modal Dialog -->
+<div class="modal-overlay" id="reviewModal">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeModal('reviewModal')">&times;</button>
+        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Share Your Experience</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">We'd love to hear how your time at D Cool Cafe was!</p>
+        
+        <form onsubmit="submitReview(event)">
+            <div class="form-group mb-3">
+                <label class="form-label">Your Name *</label>
+                <input type="text" name="author_name" class="form-input" placeholder="e.g. Debashis Panda" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label">Rating *</label>
+                <select name="rating" class="form-select">
+                    <option value="5">★★★★★ (5/5 Fantastic Experience!)</option>
+                    <option value="4">★★★★☆ (4/5 Really Good)</option>
+                    <option value="3">★★★☆☆ (3/5 Average)</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label">Who are you? (Optional)</label>
+                <input type="text" name="tag" class="form-input" placeholder="e.g. VSSUT Student, Local Regular, Coffee Lover">
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="form-label">Your Review & Favorite Dishes *</label>
+                <textarea name="comment" class="form-textarea" placeholder="Tell us what you loved about our food, coffee, or vibe..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa-solid fa-paper-plane"></i> Submit Review
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set minimum date to today
+    const dateInput = document.getElementById('resDateInput');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+        dateInput.value = today;
+    }
+</script>
+{% endblock %}

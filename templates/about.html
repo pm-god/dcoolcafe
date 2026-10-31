@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Our Story & Philosophy | {{ cafe_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="padding-top: 3.5rem;">
+    <div class="container">
+        
+        <div class="section-head">
+            <span class="section-tag">About D Cool Cafe</span>
+            <h1 class="section-title">Brewed with Love in Burla</h1>
+            <p class="section-desc">From our cozy corner above Goocool in Burla Daily Market, we set out with one simple dream: to create a space that feels like home.</p>
+        </div>
+
+        <!-- Story Two-Column Layout -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; margin-bottom: 5rem;">
+            <div>
+                <span class="section-tag">The Beginning</span>
+                <h2 style="font-size: 2.2rem; margin-bottom: 1.2rem;">A Vintage Haven for Friends & Foodies</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.2rem; line-height: 1.8;">
+                    Nestled in the bustling market of Burla, <strong>D Cool Cafe</strong> was born out of a desire to create a calm, warm, and vintage sanctuary where college students from VSSUT and VIMSAR, local families, and travelers could slow down, enjoy exceptional food, and connect.
+                </p>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.8;">
+                    Our philosophy is immortalized in our Instagram motto: <em>"A vintage vibe, delicious food, friendly service, passionate team & Fun Experience."</em> Every cup of cold coffee we froth, every pizza crust we bake, and every playlist we curate is guided by this promise.
+                </p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="{{ url_for('menu') }}" class="btn btn-primary">
+                        <i class="fa-solid fa-utensils"></i> Explore Our Delights
+                    </a>
+                    <a href="{{ instagram_url }}" target="_blank" class="btn btn-secondary">
+                        <i class="fa-brands fa-instagram"></i> Follow Our Journey
+                    </a>
+                </div>
+            </div>
+            
+            <div style="position: relative;">
+                <div style="border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--border-highlight); box-shadow: var(--shadow-soft);">
+                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80" alt="D Cool Cafe Ambiance" style="width: 100%; height: 420px; object-fit: cover;">
+                </div>
+                <div style="position: absolute; bottom: -20px; right: -20px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.2rem 1.6rem; box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 1rem;">
+                    <i class="fa-solid fa-heart" style="color: var(--primary-amber); font-size: 1.8rem;"></i>
+                    <div>
+                        <strong style="display: block; font-size: 1.1rem; color: var(--text-primary);">Burla's Heart</strong>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Daily Market, Sambalpur</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 Pillars Section -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3.5rem 2.5rem; margin-bottom: 5rem;">
+            <div class="section-head" style="margin-bottom: 2.8rem;">
+                <span class="section-tag">Our Core Values</span>
+                <h2 class="section-title">The Four Pillars of D Cool Cafe</h2>
+            </div>
+
+            <div class="vibe-grid">
+                <div style="text-align: center;">
+                    <div class="vibe-icon" style="margin: 0 auto 1.2rem;">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.6rem;">Fresh Quality Always</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Freshly baked pizza dough, premium cheese, crisp greens, and rich dairy. No shortcuts.</p>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="vibe-icon" style="margin: 0 auto 1.2rem;">
+                        <i class="fa-solid fa-mug-hot"></i>
+                    </div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.6rem;">Coffee Obsession</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Whether you need an energizing hot brew or our signature thick cold coffee, every beverage hits the sweet spot.</p>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="vibe-icon" style="margin: 0 auto 1.2rem;">
+                        <i class="fa-solid fa-face-smile"></i>
+                    </div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.6rem;">Warm Hospitality</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Friendly, passionate team members who make you feel welcomed like family from the moment you step in.</p>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="vibe-icon" style="margin: 0 auto 1.2rem;">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.6rem;">Student Friendly</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Affordable pricing without cutting corners on taste or ambiance. The ultimate student hangout adda.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

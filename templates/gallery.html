@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Vintage Gallery & Instagram Wall | {{ cafe_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="padding-top: 3.5rem;">
+    <div class="container">
+        
+        <div class="section-head mb-4">
+            <span class="section-tag">Visual Moments</span>
+            <h1 class="section-title">The Vintage Gallery</h1>
+            <p class="section-desc">Glimpses into our cozy ambiance, handcrafted coffee art, mouth-watering pizzas, and wonderful memories made at D Cool Cafe.</p>
+        </div>
+
+        <!-- Instagram Profile Banner -->
+        <div class="insta-badge-banner" style="margin-bottom: 3.5rem;">
+            <div class="insta-bio-block">
+                <div class="insta-avatar">
+                    <div class="insta-avatar-inner">
+                        <i class="fa-brands fa-instagram"></i>
+                    </div>
+                </div>
+                <div class="insta-meta">
+                    <h3 style="font-size: 1.4rem;">@{{ instagram_handle }}</h3>
+                    <p style="color: var(--primary-amber); font-weight: 500;">"{{ tagline }}"</p>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-location-pin"></i> Daily Market, Burla, Odisha</span>
+                </div>
+            </div>
+            <div>
+                <a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                    <i class="fa-brands fa-instagram"></i> Visit Official Instagram
+                </a>
+            </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="insta-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+            
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=1200&q=85', 'Signature Cold Coffee with Chocolate Drizzle')">
+                <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80" alt="Signature Cold Coffee">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Signature Cold Coffee with Chocolate Drizzle ☕ #dcoolcafe</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=85', 'Stone-baked Tandoori Paneer Pizza')">
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80" alt="Tandoori Pizza">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Hot Stone-Baked Tandoori Paneer Pizza 🍕 #burla</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=85', 'Cozy Warm Vintage Ambiance')">
+                <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80" alt="Cafe Interior">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Warm fairy lights & vintage cozy booths ✨ #vintagevibes</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=85', 'Crispy Gourmet Burger')">
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80" alt="Crispy Burger">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Crispy spiced patties with melted cheddar 🍔 #juicybites</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=1200&q=85', 'Loaded Mexican Cheesy Fries')">
+                <img src="https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80" alt="Loaded Fries">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Loaded Cheesy Mexican Fries with Jalapeños 🍟 #addafavorite</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1200&q=85', 'Electric Blue Lagoon Mocktail')">
+                <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80" alt="Electric Blue Lagoon">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Electric Blue Lagoon Mocktail on ice 🍹 #chillrefresh</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1621996346565-e3d5d6281023?auto=format&fit=crop&w=1200&q=85', 'Creamy Alfredo White Sauce Penne')">
+                <img src="https://images.unsplash.com/photo-1621996346565-e3d5d6281023?auto=format&fit=crop&w=600&q=80" alt="Creamy Alfredo">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Creamy garlic parmesan Alfredo penne 🍝 #italiancomfort</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=1200&q=85', 'Sizzling Brownie with Vanilla Scoop')">
+                <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80" alt="Sizzling Brownie">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Sizzling hot brownie with cold vanilla ice cream 🍫 #sweetending</span>
+                </div>
+            </div>
+
+            <div class="insta-card" onclick="openLightbox('https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=1200&q=85', 'Oreo Overload Monster Shake')">
+                <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80" alt="Oreo Shake">
+                <div class="insta-overlay">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Thick Oreo Overload Monster Shake 🍪 #shakeaddict</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Social CTA -->
+        <div style="text-align: center; margin-top: 4rem; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+            <i class="fa-brands fa-instagram" style="font-size: 3rem; color: var(--primary-amber); margin-bottom: 1rem;"></i>
+            <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Be Part of Our Story</h2>
+            <p style="color: var(--text-secondary); max-width: 550px; margin: 0 auto 1.8rem;">Click a photo during your visit, tag <strong>@{{ instagram_handle }}</strong> and use <strong>#DCoolCafe</strong>. We feature our favorite customer snaps every week!</p>
+            <a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+                <i class="fa-brands fa-instagram"></i> Open @{{ instagram_handle }} on Instagram
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div class="modal-overlay" id="lightboxModal">
+    <div style="max-width: 900px; width: 95%; text-align: center; position: relative;">
+        <button class="modal-close" style="top: -40px; right: 0; color: #fff; font-size: 2rem;" onclick="closeModal('lightboxModal')">&times;</button>
+        <img id="lightboxImg" src="" alt="Gallery Preview" style="max-height: 80vh; width: auto; max-width: 100%; border-radius: var(--radius-md); box-shadow: var(--shadow-soft); margin: 0 auto;">
+        <p id="lightboxCaption" style="margin-top: 1rem; color: var(--text-primary); font-size: 1.1rem; font-family: var(--font-heading);"></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openLightbox(url, caption) {
+        const img = document.getElementById('lightboxImg');
+        const cap = document.getElementById('lightboxCaption');
+        if (img && cap) {
+            img.src = url;
+            cap.textContent = caption;
+            openModal('lightboxModal');
+        }
+    }
+</script>
+{% endblock %}

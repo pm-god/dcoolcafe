@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Login | {{ cafe_name }}{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="padding-top: 5rem; min-height: 70vh; display: flex; align-items: center;">
+    <div class="container" style="max-width: 440px;">
+        
+        <div style="background: var(--bg-card); border: 1px solid var(--border-highlight); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-soft); text-align: center;">
+            <div class="brand-symbol" style="margin: 0 auto 1.2rem; width: 54px; height: 54px; font-size: 1.6rem;">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            
+            <h2 style="font-size: 1.6rem; margin-bottom: 0.4rem;">Staff & Admin Portal</h2>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 2rem;">Manage reservations, update menu items, and view inquiries.</p>
+
+            <form action="{{ url_for('admin_login') }}" method="POST" style="text-align: left;">
+                <div class="form-group mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-input" placeholder="admin" required autofocus>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login to Dashboard
+                </button>
+            </form>
+
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem;">
+                Default credentials: <code>admin</code> / <code>dcool123</code>
+            </p>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
