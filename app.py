@@ -1,5 +1,6 @@
 import os
 import hashlib
+import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from flask import (
@@ -8,11 +9,17 @@ from flask import (
 )
 from database import get_db, init_db
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dcoolcafe_secret_burla_2024_vintage_key')
 
 # Initialize DB if not present
-init_db()
+try:
+    init_db()
+except Exception as e:
+    logger.warning(f"Database initialization warning: {e}")
 
 def is_cafe_open():
     """Check if D Cool Cafe is open right now based on Indian Standard Time (IST)."""
@@ -120,18 +127,23 @@ def reserve():
             flash('Please fill in all required fields (Name, Phone, Date, Time).', 'danger')
             return redirect(url_for('reserve'))
         
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute('''
-        INSERT INTO reservations (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests))
-        conn.commit()
-        booking_id = cursor.lastrowid
-        conn.close()
-        
-        flash(f'Table Reserved Successfully! Your Booking ID is #DCC-{booking_id:04d}. We look forward to welcoming you!', 'success')
-        return redirect(url_for('reservation_success', booking_id=booking_id))
+        try:
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('''
+            INSERT INTO reservations (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests))
+            conn.commit()
+            booking_id = cursor.lastrowid
+            conn.close()
+            
+            flash(f'Table Reserved Successfully! Your Booking ID is #DCC-{booking_id:04d}. We look forward to welcoming you!', 'success')
+            return redirect(url_for('reservation_success', booking_id=booking_id))
+        except Exception as e:
+            logger.error(f"Error creating reservation: {e}", exc_info=True)
+            flash('We encountered an issue saving your reservation online. Please reach out to us directly on WhatsApp or call us to confirm!', 'danger')
+            return redirect(url_for('reserve'))
         
     return render_template('reserve.html')
 
@@ -170,16 +182,21 @@ def contact():
             flash('Please provide your name, message, and contact information.', 'danger')
             return redirect(url_for('contact'))
             
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute('''
-        INSERT INTO contact_messages (name, email, phone, subject, message)
-        VALUES (?, ?, ?, ?, ?)
-        ''', (name, email, phone, subject, message))
-        conn.commit()
-        conn.close()
-        
-        flash('Thank you for reaching out! Your message has been sent to D Cool Cafe team.', 'success')
+        try:
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('''
+            INSERT INTO contact_messages (name, email, phone, subject, message)
+            VALUES (?, ?, ?, ?, ?)
+            ''', (name, email, phone, subject, message))
+            conn.commit()
+            conn.close()
+            
+            flash('Thank you for reaching out! Your message has been sent to D Cool Cafe team.', 'success')
+        except Exception as e:
+            logger.error(f"Error saving contact message: {e}", exc_info=True)
+            flash('Message could not be saved right now. Please reach out to us directly on WhatsApp or call.', 'danger')
+            
         return redirect(url_for('contact'))
         
     return render_template('contact.html')
@@ -216,21 +233,25 @@ def api_reserve():
     if not (guest_name and phone and reservation_date and reservation_time):
         return jsonify({'success': False, 'message': 'Missing required fields'}), 400
         
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-    INSERT INTO reservations (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests))
-    conn.commit()
-    booking_id = cursor.lastrowid
-    conn.close()
-    
-    return jsonify({
-        'success': True, 
-        'booking_id': f'DCC-{booking_id:04d}',
-        'message': f'Table reserved! Your booking code is DCC-{booking_id:04d}.'
-    })
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('''
+        INSERT INTO reservations (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion, special_requests))
+        conn.commit()
+        booking_id = cursor.lastrowid
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'booking_id': f'DCC-{booking_id:04d}',
+            'message': f'Table reserved! Your booking code is DCC-{booking_id:04d}.'
+        })
+    except Exception as e:
+        logger.error(f"API reserve error: {e}", exc_info=True)
+        return jsonify({'success': False, 'message': 'Could not save reservation. Please book via WhatsApp!'}), 500
 
 @app.route('/api/review', methods=['POST'])
 def api_review():
@@ -243,16 +264,20 @@ def api_review():
     if not (author_name and comment):
         return jsonify({'success': False, 'message': 'Please provide your name and review'}), 400
         
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-    INSERT INTO reviews (author_name, rating, comment, tag, is_approved)
-    VALUES (?, ?, ?, ?, 1)
-    ''', (author_name, rating, comment, tag))
-    conn.commit()
-    conn.close()
-    
-    return jsonify({'success': True, 'message': 'Thank you! Your review has been added to our wall.'})
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('''
+        INSERT INTO reviews (author_name, rating, comment, tag, is_approved)
+        VALUES (?, ?, ?, ?, 1)
+        ''', (author_name, rating, comment, tag))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': 'Thank you! Your review has been added to our wall.'})
+    except Exception as e:
+        logger.error(f"API review error: {e}", exc_info=True)
+        return jsonify({'success': False, 'message': 'Could not submit review at this time.'}), 500
 
 @app.route('/api/status')
 def api_status():
@@ -325,12 +350,16 @@ def update_reservation_status(res_id, new_status):
     if not is_admin():
         return redirect(url_for('admin_login'))
         
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('UPDATE reservations SET status = ? WHERE id = ?', (new_status, res_id))
-    conn.commit()
-    conn.close()
-    flash(f'Reservation #{res_id} marked as {new_status}.', 'success')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE reservations SET status = ? WHERE id = ?', (new_status, res_id))
+        conn.commit()
+        conn.close()
+        flash(f'Reservation #{res_id} marked as {new_status}.', 'success')
+    except Exception as e:
+        logger.error(f"Error updating reservation status: {e}", exc_info=True)
+        flash(f'Failed to update reservation: {e}', 'danger')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/menu/toggle/<int:item_id>')
@@ -338,12 +367,16 @@ def toggle_menu_item(item_id):
     if not is_admin():
         return redirect(url_for('admin_login'))
         
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('UPDATE menu_items SET available = CASE WHEN available = 1 THEN 0 ELSE 1 END WHERE id = ?', (item_id,))
-    conn.commit()
-    conn.close()
-    flash('Menu item availability toggled.', 'info')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE menu_items SET available = CASE WHEN available = 1 THEN 0 ELSE 1 END WHERE id = ?', (item_id,))
+        conn.commit()
+        conn.close()
+        flash('Menu item availability toggled.', 'info')
+    except Exception as e:
+        logger.error(f"Error toggling menu item: {e}", exc_info=True)
+        flash(f'Failed to update menu item: {e}', 'danger')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/menu/add', methods=['POST'])
@@ -360,15 +393,19 @@ def add_menu_item():
     is_bestseller = 1 if request.form.get('is_bestseller') else 0
     image_url = request.form.get('image_url') or 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80'
     
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-    INSERT INTO menu_items (name, category, description, price, is_veg, is_spicy, is_bestseller, image_url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (name, category, description, price, is_veg, is_spicy, is_bestseller, image_url))
-    conn.commit()
-    conn.close()
-    flash('New menu item added successfully!', 'success')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('''
+        INSERT INTO menu_items (name, category, description, price, is_veg, is_spicy, is_bestseller, image_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (name, category, description, price, is_veg, is_spicy, is_bestseller, image_url))
+        conn.commit()
+        conn.close()
+        flash('New menu item added successfully!', 'success')
+    except Exception as e:
+        logger.error(f"Error adding menu item: {e}", exc_info=True)
+        flash(f'Failed to add menu item: {e}', 'danger')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/review/delete/<int:review_id>')
@@ -376,12 +413,16 @@ def delete_review(review_id):
     if not is_admin():
         return redirect(url_for('admin_login'))
         
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM reviews WHERE id = ?', (review_id,))
-    conn.commit()
-    conn.close()
-    flash('Review deleted.', 'info')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM reviews WHERE id = ?', (review_id,))
+        conn.commit()
+        conn.close()
+        flash('Review deleted.', 'info')
+    except Exception as e:
+        logger.error(f"Error deleting review: {e}", exc_info=True)
+        flash(f'Failed to delete review: {e}', 'danger')
     return redirect(url_for('admin_dashboard'))
 
 if __name__ == '__main__':

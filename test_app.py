@@ -87,5 +87,54 @@ class DCoolCafeTest(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn(b'D Cool Cafe Operations', response_data := res.data)
 
+    def test_vercel_serverless_db_mode(self):
+        import os
+        import database
+        
+        # Simulate VERCEL environment
+        os.environ['VERCEL'] = '1'
+        db_path = database.get_db_path()
+        self.assertTrue('dcoolcafe.db' in db_path)
+        self.assertTrue(os.path.exists(db_path))
+        
+        # Ensure we can connect, write, and query
+        conn = database.get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM menu_items")
+        count = cursor.fetchone()[0]
+        self.assertGreater(count, 0)
+        
+        # Ensure reservations can be inserted in this mode
+        cursor.execute('''
+        INSERT INTO reservations (guest_name, email, phone, reservation_date, reservation_time, guests_count, occasion)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', ('Vercel Test User', 'test@vercel.app', '9999999999', '2026-11-05', '08:00 PM', 2, 'Date Night'))
+        conn.commit()
+        last_id = cursor.lastrowid
+        self.assertGreater(last_id, 0)
+        conn.close()
+        
+        # Clean up env
+        os.environ.pop('VERCEL', None)
+
+    def test_reservation_submit_vercel_mode(self):
+        import os
+        os.environ['VERCEL'] = '1'
+        payload = {
+            'guest_name': 'Priyanka Serverless',
+            'email': 'priyanka@example.com',
+            'phone': '9876543210',
+            'reservation_date': '2026-11-02',
+            'reservation_time': '08:30 PM',
+            'guests_count': 3,
+            'occasion': 'Post-Exam / Farewell Party',
+            'special_requests': 'Corner table please.'
+        }
+        response = self.client.post('/reserve', data=payload, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Priyanka Serverless', response.data)
+        self.assertIn(b'Booking Confirmed', response.data)
+        os.environ.pop('VERCEL', None)
+
 if __name__ == '__main__':
     unittest.main()

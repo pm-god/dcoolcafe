@@ -1,11 +1,57 @@
 import sqlite3
 import os
+import shutil
+import tempfile
+import logging
 from datetime import datetime
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dcoolcafe.db')
+logger = logging.getLogger(__name__)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BUNDLED_DB_PATH = os.path.join(BASE_DIR, 'dcoolcafe.db')
+
+def get_db_path():
+    """
+    Determine the appropriate database file path.
+    In serverless platforms like Vercel or AWS Lambda, the application directory
+    (/var/task) is mounted strictly read-only. SQLite will throw:
+    'sqlite3.OperationalError: attempt to write a readonly database'.
+    
+    To fix this in serverless environments, we automatically detect the environment
+    and use the writable temporary directory (/tmp/dcoolcafe.db).
+    """
+    custom_path = os.environ.get('DATABASE_PATH')
+    if custom_path:
+        return custom_path
+
+    is_serverless = bool(
+        os.environ.get('VERCEL')
+        or os.environ.get('VERCEL_ENV')
+        or os.environ.get('AWS_LAMBDA_FUNCTION_NAME')
+        or not os.access(BASE_DIR, os.W_OK)
+    )
+
+    if is_serverless:
+        tmp_dir = tempfile.gettempdir()
+        tmp_db = os.path.join(tmp_dir, 'dcoolcafe.db')
+
+        # If the tmp database doesn't exist yet, copy the pre-seeded bundled database
+        if not os.path.exists(tmp_db):
+            if os.path.exists(BUNDLED_DB_PATH):
+                try:
+                    shutil.copyfile(BUNDLED_DB_PATH, tmp_db)
+                    try:
+                        os.chmod(tmp_db, 0o666)
+                    except Exception:
+                        pass
+                except Exception as e:
+                    logger.error(f"Notice: Failed to copy bundled DB to {tmp_db}: {e}")
+        return tmp_db
+
+    return BUNDLED_DB_PATH
 
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(get_db_path(), timeout=30.0, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -34,7 +80,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS reservations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         guest_name TEXT NOT NULL,
-        email TEXT NOT NULL,
+        email TEXT DEFAULT '',
         phone TEXT NOT NULL,
         reservation_date TEXT NOT NULL,
         reservation_time TEXT NOT NULL,
